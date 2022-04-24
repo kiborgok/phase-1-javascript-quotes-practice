@@ -58,14 +58,36 @@
   ],
   "likes": [
     {
-      "id": 1,
-      "quoteId": 1,
-      "createdAt": 1558524356
+      "quoteId": 2,
+      "id": 4
     },
     {
-      "quoteId": 10,
-      "id": 2,
-      "createdAt": 1558524358
+      "quoteId": 1,
+      "id": 8
+    },
+    {
+      "quoteId": 3,
+      "id": 9
+    },
+    {
+      "quoteId": 3,
+      "id": 11
+    },
+    {
+      "quoteId": 3,
+      "id": 12
+    },
+    {
+      "quoteId": 5,
+      "id": 13
+    },
+    {
+      "quoteId": 5,
+      "id": 14
+    },
+    {
+      "quoteId": 5,
+      "id": 15
     }
   ]
 }
