@@ -19,6 +19,22 @@ document.addEventListener("DOMContentLoaded", () => {
       createQuoteCard(res);
     });
   }
+  function handleLike(likes, quote) {
+    const likeAvailable = likes.find((like) => like.quoteId == quote.id);
+    if (likeAvailable) {
+      console.log("available");
+      removeLike(likeAvailable.id);
+      likes.innerHTML = `Likes <span>${quote.likes.length - 1}</span>`;
+      return;
+    }
+    let quoteId = quote.id;
+    addLike(quoteId).then((data) => {
+      getQuote(quoteId).then((res) => {
+        likes.innerHTML = `Likes <span>${res.likes.length}</span>`;
+      });
+    });
+    console.log("not available");
+  }
   function createQuoteCard(data) {
     if (Array.isArray(data)) {
       data.forEach((quote) => {
@@ -38,30 +54,9 @@ document.addEventListener("DOMContentLoaded", () => {
         likes.setAttribute("class", "btn-success");
         likes.innerHTML = `Likes <span>${quote.likes.length}</span>`;
         likes.addEventListener("click", (e) => {
-          getLikes().then(res => {
-            res.forEach(like => {
-              if (like.quoteId === quote.id) {
-                console.log(like.quoteId === quote.id);
-                removeLike(like.id)
-                likes.innerHTML = `Likes <span>${quote.likes.length - 1}</span>`;
-                return
-              }
-              let quoteId = quote.id
-              addLike(quoteId).then(data => {
-                getQuote(quoteId).then((res) => {
-                  likes.innerHTML = `Likes <span>${res.likes.length}</span>`;
-                });
-              });
-            })
-            if (res.length === 0) {
-              let quoteId = quote.id;
-              addLike(quoteId).then((data) => {
-                getQuote(quoteId).then((res) => {
-                  likes.innerHTML = `Likes <span>${res.likes.length}</span>`;
-                });
-              });
-            }
-          })
+          getLikes().then((res) => {
+            handleLike(res, quote);
+          });
         });
         const del = document.createElement("button");
         del.setAttribute("class", "btn-danger");
@@ -119,12 +114,15 @@ document.addEventListener("DOMContentLoaded", () => {
       headers: { "Content-Type": "application/json" },
     });
   }
-    function removeLike(id) {
-      return fetch(`http://localhost:3000/likes/${id}`, {
-        method: "DELETE",
-        headers: { "Content-Type": "application/json",Accept:"application/json" },
-      });
-    }
+  function removeLike(id) {
+    return fetch(`http://localhost:3000/likes/${id}`, {
+      method: "DELETE",
+      headers: {
+        "Content-Type": "application/json",
+        Accept: "application/json",
+      },
+    });
+  }
   function getQuotes() {
     return fetch(`http://localhost:3000/quotes?_embed=likes`).then((res) =>
       res.json()
@@ -135,16 +133,14 @@ document.addEventListener("DOMContentLoaded", () => {
       (res) => res.json()
     );
   }
-    function getLikes() {
-      return fetch(`http://localhost:3000/likes`).then((res) =>
-        res.json()
-      );
-    }
+  function getLikes() {
+    return fetch(`http://localhost:3000/likes`).then((res) => res.json());
+  }
   function addLike(quoteId) {
     return fetch(`http://localhost:3000/likes`, {
       method: "POST",
       headers: { "Content-Type": "application/json" },
-      body:JSON.stringify({quoteId})
-    }).then(res => res.json())
+      body: JSON.stringify({ quoteId }),
+    }).then((res) => res.json());
   }
 });
